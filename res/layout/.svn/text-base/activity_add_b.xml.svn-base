@@ -1,0 +1,489 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_bookmark_act_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/name_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/name_text_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:text="Bookmark" >
+
+            <requestFocus />
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/place_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Place"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/take_position_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Take current position" />
+
+            <LinearLayout
+                android:id="@+id/take_position_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Lat: "
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/position_latitude_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Long:"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/position_longitude_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp" >
+
+            <TextView
+                android:id="@+id/radius_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Radius"
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/radius_text_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="number"
+                android:text="15" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/header_w_e_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:text="When Entering"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/wifi_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="WiFi"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+
+            <RadioGroup
+                android:id="@+id/wifi_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/wifi_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/wifi_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/wifi_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/wifi_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/mobile_network_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mobile network"
+            android:visibility="gone" 
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" 
+            android:visibility="gone" >
+
+            <RadioGroup
+                android:id="@+id/mobile_network_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/mobile_network_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/mobile_network_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/mobile_network_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/mobile_network_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/bluetooth_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bluetooth"
+            android:textSize="20dp" 
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+			android:visibility="gone" >
+
+            <RadioGroup
+                android:id="@+id/bluetooth_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/bluetooth_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/bluetooth_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/bluetooth_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/bluetooth_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/mute_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mute"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+
+            <RadioGroup
+                android:id="@+id/mute_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/mute_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/mute_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/mute_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/mute_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp" 
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/vibrator_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vibrator"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+
+            <RadioGroup
+                android:id="@+id/vibrator_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/vibrator_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/vibrator_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/vibrator_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/vibrator_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp" 
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/flightmode_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Flightmode"
+            android:textSize="20dp" 
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" 
+            android:visibility="gone" >
+
+            <RadioGroup
+                android:id="@+id/flightmode_radiogroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/flightmode_on_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="On"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/flightmode_off_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Off"
+                    android:textSize="12dp" />
+
+                <RadioButton
+                    android:id="@+id/flightmode_unaffected_radio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Unaffected"
+                    android:textSize="12dp" />
+            </RadioGroup>
+
+            <CheckBox
+                android:id="@+id/flightmode_revert_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:enabled="true"
+                android:text="Revert when leaving"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/revert_all_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Revert all to default when leaving"
+            android:textSize="12dp" 
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/confirm_bookmark_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Confirm" />
+
+            <Button
+                android:id="@+id/reset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/delete_bookmark_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Delete"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

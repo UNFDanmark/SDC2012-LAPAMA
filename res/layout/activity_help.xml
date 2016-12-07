@@ -1,0 +1,60 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view_help"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_large"
+            android:text="The Bookmarks page is for showing all the bookmarks saved on the phone. It is also on this page you can edit your bookmarks."
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_medium"
+            android:text="The Add Bookmarks page is for adding a new bookmark."
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+     	
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_medium"
+            android:text="On the Credits page you can see who made the application."
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+           
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_medium"
+            android:text="Bookmarks are circular locations (chosen via GPS-coordinates) in which certain power-saving-options are enabled."
+            android:textAppearance="?android:attr/textAppearanceMedium" /> <!-- I like this wone! -->
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="@dimen/padding_medium"
+            android:text="The process of adding a bookmark is done like following: First you have to choose a name for the bookmark, like School. Then press the &quot;take current location&quot;-button to get your GPS-coordinates (this will be used as the center point in the bookmarks area). Next you have to choose the radius (in meters) of the bookmark area (For example, if you stand in the middle of your school when you take your GPS-coordinates. Then you choose the approximate length of where you are to the further most away classroom and then you should be fine.). Then all there is left to do before you add the bookmark is to choose which power-hungry functions you want to turn off or on while in the bookmarks area. Once all are chosen click the add button and there you go!"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+</ScrollView>

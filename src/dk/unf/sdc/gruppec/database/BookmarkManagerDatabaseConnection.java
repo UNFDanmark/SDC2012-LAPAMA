@@ -1,0 +1,369 @@
+package dk.unf.sdc.gruppec.database;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import dk.unf.sdc.gruppec.data.Bookmark;
+import dk.unf.sdc.gruppec.data.Coordinate;
+import dk.unf.sdc.gruppec.data.State;
+
+/**
+ * Eksempelklasse for brugen af SQLite under Android Denne klasse vil vise en
+ * meget primitiv anvendelse af SQLite til Android. Vi udvider blot den
+ * abstrakte klasse SQLiteOpenHelper. L�s om denne her:
+ * http://developer.android.
+ * com/reference/android/database/sqlite/SQLiteOpenHelper.html
+ * 
+ * Min databse skal indenholde kontakter, hvortil man kan gemme: Navn
+ * Telefonnummer En r�kke grupper, som ens kontakt er medlem af
+ * 
+ * Vi skal bruge nogle hj�lpeklasser, Contact og Group. Disse er beskrevet i
+ * deres egen source code.
+ * 
+ * Vores database vil indenholde to tabeller: contacts (INT id, TEXT name, TEXT
+ * phone) contactGroups (INT contactId, TEXT groupName) PRIMARY KEY for contacts
+ * er id, mens PRIMARY KEY for contactGroups er (INT contactId, TEXT groupName).
+ * 
+ * Potentiel udvidelse: Man kan oprette endnu en tabel groups (TEXT groupName,
+ * BLOB groupImage) Med PRIMARY KEY groupName BLOB er en datatype, som tillader
+ * at gemme filer, som er i bin�rt format (dvs. i praksis alting, som man ikke
+ * kan gemme i TEXT).
+ * 
+ * @author Tobias Ansbak Louv
+ */
+// TODO: nedarver ikke fra SQLiteOpenHelper men fra DatabaseManagerAbstraction..
+// Forklar!
+public class BookmarkManagerDatabaseConnection extends
+		DatabaseManagerAbstraction {
+
+	/*
+	 * For at have en nem m�de at huske database-, tabel-, kolonnenavne,
+	 * deklererer vi en masse statiske feltvariable. P� denne m�de vil
+	 * compileren hj�lpe os lidt.
+	 */
+
+	/*
+	 * Databasenavn - giv den nu noget sigende! :-) Fremover vil I referere til
+	 * databasenavnet udelukkene ved at skrive
+	 * ContactsManagerOpenHelper.DATABASE_NAME eller kort DATABASE_NAME.
+	 */
+	private static final String DATABASE_NAME = "bookmarksManager";
+
+	/*
+	 * Navnen p� tabelerne i jeres database Igen: Giv dem noget sigende! :-)
+	 */
+	private static final String TABLE_BOOKMARKS = "bookmarks";
+
+	/*
+	 * Navnene p� kolonnerne i tabellerne. Hvad tror I, jeg vil sige om
+	 * navngivningen? Giv dem noget sigende! :-)
+	 */
+	// Kolonnerne i contacts
+	private static final String KEY_BOOKMARKS_ID = "id";
+	private static final String KEY_BOOKMARKS_NAME = "name";
+	private static final String KEY_BOOKMARKS_LATITUDE = "latitude";
+	private static final String KEY_BOOKMARKS_LONGITUDE = "longitude";
+	private static final String KEY_BOOKMARKS_RADIUS = "radius";
+	private static final String KEY_BOOKMARKS_REVERT_D = "revertD";
+	private static final String KEY_BOOKMARKS_WIFI_STATE = "wifiState";
+	private static final String KEY_BOOKMARKS_WIFI_REVERT = "wifiRevert";
+	private static final String KEY_BOOKMARKS_MOBILE_NETWORK_STATE = "mobileNetworkState";
+	private static final String KEY_BOOKMARKS_MOBILE_NETWORK_REVERT = "mobileNetworkRevert";
+	private static final String KEY_BOOKMARKS_BLUETOOTH_STATE = "bluetoothState";
+	private static final String KEY_BOOKMARKS_BLUETOOTH_REVERT = "bluetoothRevert";
+	private static final String KEY_BOOKMARKS_MUTE_STATE = "muteState";
+	private static final String KEY_BOOKMARKS_MUTE_REVERT = "muteRevert";
+	private static final String KEY_BOOKMARKS_VIBRATOR_STATE = "vibratorState";
+	private static final String KEY_BOOKMARKS_VIBRATOR_REVERT = "vibratorRevert";
+	private static final String KEY_BOOKMARKS_FLIGHTMODE_STATE = "flightmodeState";
+	private static final String KEY_BOOKMARKS_FLIGHTMODE_REVERT = "flightmodeRevert";
+
+	/*
+	 * For at bruge en database, skal vi oprette tabeller. Dette m� vi g�re ved
+	 * at skrive noget SQL. Hj�lp kan findes p�:
+	 * http://www.sqlite.org/lang_createtable.html
+	 * 
+	 * SQL'en som skal k�res for at oprette tabellerne, jeg har beskrevet
+	 * ovenfor
+	 */
+	// For at oprette contacts
+	private static final String TABLE_CREATE_BOOKMARK = "CREATE TABLE "
+			+ TABLE_BOOKMARKS + " (" + KEY_BOOKMARKS_ID
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_BOOKMARKS_NAME
+			+ " TEXT, " + KEY_BOOKMARKS_LATITUDE + " FLOAT, "
+			+ KEY_BOOKMARKS_LONGITUDE + " FLOAT, " + KEY_BOOKMARKS_RADIUS
+			+ " INTEGER, " + KEY_BOOKMARKS_REVERT_D + " INTEGER, "
+			+ KEY_BOOKMARKS_WIFI_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_WIFI_REVERT + " INTEGER, "
+			+ KEY_BOOKMARKS_MOBILE_NETWORK_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_MOBILE_NETWORK_REVERT + " INTEGER, "
+			+ KEY_BOOKMARKS_BLUETOOTH_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_BLUETOOTH_REVERT + " INTEGER, "
+			+ KEY_BOOKMARKS_MUTE_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_MUTE_REVERT + " INTEGER, "
+			+ KEY_BOOKMARKS_VIBRATOR_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_VIBRATOR_REVERT + " INTEGER, "
+			+ KEY_BOOKMARKS_FLIGHTMODE_STATE + " INTEGER, "
+			+ KEY_BOOKMARKS_FLIGHTMODE_REVERT + " INTEGER" + ");";
+
+	/**
+	 * Constructor for
+	 * 
+	 * @param context
+	 */
+	public BookmarkManagerDatabaseConnection(Context context) {
+		/*
+		 * Her kalder vi tilbage til konstrukt�ren i DatabaseManagerAbstraction,
+		 * for at forberede os p� at bruge SQLite. Der bliver egentlig ikke
+		 * oprettet nogen database endnu, men vi g�r os klar!
+		 */
+		super(context, DATABASE_NAME);
+		// Ingen yderligere handling er n�dvendig her.
+	}
+
+	/*
+	 * Denne metode er vigtig, da det er her, vi skal oprette vores database og
+	 * tabeller.
+	 * 
+	 * I t�nker m�ske: Hvorfor ikke bare oprette tabeller direkte i
+	 * konstrukt�ren? Svaret er: Androidsystemet holder styr p� memory, CPU,
+	 * osv., s� konstrukt�ren skal ikke lavet noget egentlig arbejde. Hold jer
+	 * til dette, ellers sker der underlige ting!
+	 * 
+	 * I dette eksempel arbejder vi med to tabeller, s� vi skal oprette begge
+	 * her.
+	 */
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		/*
+		 * Her vil vi oprette de to tabeller, som vi skal bruge. Dette g�res ved
+		 * at udf�re SQL'en (execute SQL).
+		 */
+
+		// Vi opretter contacts
+		db.execSQL(TABLE_CREATE_BOOKMARK);
+	}
+
+	// Her inds�tter vi data i databasen
+	/**
+	 * Add a contact to the database
+	 * 
+	 * @param c
+	 *            the contact to be added
+	 */
+	public void addBookmark(Bookmark b) {
+		/*
+		 * Nu skal vi til at lave et ContentValues-objekter, for at kunne
+		 * inds�tte data i tabellerne. Man skal oprette et key-value-pair for
+		 * hver kolonne i tabellen, som ikke har en defaultv�rdi. Kolonnenavnene
+		 * er selvf�lgelig keys.
+		 */
+
+		/*
+		 * Her laver vi key-value-pairs for KEY_CONTACTS_NAME- og
+		 * KEY_CONTACTS_PHONE-kolonnerne. Vi laver *ikke* for ID'et, da der er
+		 * auto increement p�.
+		 */
+		ContentValues table_bookmarks_values = new ContentValues();
+		table_bookmarks_values.put(KEY_BOOKMARKS_NAME, b.getName());
+		table_bookmarks_values.put(KEY_BOOKMARKS_LATITUDE,
+				b.getPosition().latitude);
+		table_bookmarks_values.put(KEY_BOOKMARKS_LONGITUDE,
+				b.getPosition().longitude);
+		table_bookmarks_values.put(KEY_BOOKMARKS_RADIUS, b.getRadius());
+		table_bookmarks_values.put(KEY_BOOKMARKS_REVERT_D,
+				b.isRevertToDefault());
+		table_bookmarks_values.put(KEY_BOOKMARKS_WIFI_STATE,
+				b.getWifiState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_WIFI_REVERT,
+				b.getWifiState().revertOnExit);
+		table_bookmarks_values.put(KEY_BOOKMARKS_MOBILE_NETWORK_STATE,
+				b.getMobileNetworkState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_MOBILE_NETWORK_REVERT,
+				b.getMobileNetworkState().revertOnExit);
+		table_bookmarks_values.put(KEY_BOOKMARKS_BLUETOOTH_STATE,
+				b.getBluetoothState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_BLUETOOTH_REVERT,
+				b.getBluetoothState().revertOnExit);
+		table_bookmarks_values.put(KEY_BOOKMARKS_MUTE_STATE,
+				b.getMuteState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_MUTE_REVERT,
+				b.getMuteState().revertOnExit);
+		table_bookmarks_values.put(KEY_BOOKMARKS_VIBRATOR_STATE,
+				b.getVibratorState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_VIBRATOR_REVERT,
+				b.getVibratorState().revertOnExit);
+		table_bookmarks_values.put(KEY_BOOKMARKS_FLIGHTMODE_STATE,
+				b.getFlightmodeState().state);
+		table_bookmarks_values.put(KEY_BOOKMARKS_FLIGHTMODE_REVERT,
+				b.getFlightmodeState().revertOnExit);
+
+		/*
+		 * Inds�t r�kker i contacts Resultatet fra db.insert-metoden er en long,
+		 * hvilket er ID'et p� den r�kke, man inds�tter. Der er altid et tal at
+		 * modtage, og n�r man bruger auto increement, vil det svare til
+		 * r�kkeID'et (med mindre man piller ved nummeret p� v�rdierne i
+		 * databasen). Der inds�ttes null udfor alle de key-value-pairs som
+		 * mangler.
+		 */
+		long insertID = insertRow(TABLE_BOOKMARKS, table_bookmarks_values);
+
+		if (insertID == -1)
+			return; // Hvis insertID == -1, skete der en fejl. Stop!
+		// Ellers modtager vi ID'et p� kontakten. Dette gemmer vi for en god
+		// ordens skyld i kontaktobjektet
+		b.setId((int) insertID);
+
+	}
+
+	/**
+	 * Slet en kontakt fra databasen
+	 * 
+	 * @param id
+	 *            ID'et p� den kontakt, der skal slettes
+	 */
+	public void removeBookmark(int id) {
+		removeById(TABLE_BOOKMARKS, KEY_BOOKMARKS_ID, id);
+	}
+
+	/**
+	 * Update a contact
+	 * 
+	 * @param b
+	 *            the contact to be updated
+	 */
+	public void updateBookmark(Bookmark b) {
+		// Opdater i contacts-tabellen.
+		ContentValues values = new ContentValues();
+		values.put(KEY_BOOKMARKS_NAME, b.getName());
+		values.put(KEY_BOOKMARKS_LATITUDE, b.getPosition().latitude);
+		values.put(KEY_BOOKMARKS_LONGITUDE, b.getPosition().longitude);
+		values.put(KEY_BOOKMARKS_RADIUS, b.getRadius());
+		values.put(KEY_BOOKMARKS_REVERT_D, b.isRevertToDefault());
+		values.put(KEY_BOOKMARKS_WIFI_STATE, b.getWifiState().state);
+		values.put(KEY_BOOKMARKS_WIFI_REVERT, b.getWifiState().revertOnExit);
+		values.put(KEY_BOOKMARKS_MOBILE_NETWORK_STATE,
+				b.getMobileNetworkState().state);
+		values.put(KEY_BOOKMARKS_MOBILE_NETWORK_REVERT,
+				b.getMobileNetworkState().revertOnExit);
+		values.put(KEY_BOOKMARKS_BLUETOOTH_STATE, b.getBluetoothState().state);
+		values.put(KEY_BOOKMARKS_BLUETOOTH_REVERT,
+				b.getBluetoothState().revertOnExit);
+		values.put(KEY_BOOKMARKS_MUTE_STATE, (int) b.getMuteState().state);
+		values.put(KEY_BOOKMARKS_MUTE_REVERT, b.getMuteState().revertOnExit);
+		values.put(KEY_BOOKMARKS_VIBRATOR_STATE, b.getVibratorState().state);
+		values.put(KEY_BOOKMARKS_VIBRATOR_REVERT,
+				b.getVibratorState().revertOnExit);
+		values.put(KEY_BOOKMARKS_FLIGHTMODE_STATE, b.getFlightmodeState().state);
+		values.put(KEY_BOOKMARKS_FLIGHTMODE_REVERT,
+				b.getFlightmodeState().revertOnExit);
+
+		updateById(TABLE_BOOKMARKS, KEY_BOOKMARKS_ID, b.getId(), values);
+
+	}
+
+	/**
+	 * Hent en kontakt fra databasen
+	 * 
+	 * @param id
+	 *            ID'et p� den kontakt, der skal hentes
+	 */
+	public Bookmark getBookmark(int id) {
+		Map<String, Object> bMap = getById(TABLE_BOOKMARKS, KEY_BOOKMARKS_ID,
+				id);
+		if (bMap == null)
+			return null;
+		Bookmark b = new Bookmark((String) bMap.get(KEY_BOOKMARKS_NAME),
+				(Float) bMap.get(KEY_BOOKMARKS_LATITUDE),
+				(Float) bMap.get(KEY_BOOKMARKS_LONGITUDE),
+				((Integer) bMap.get(KEY_BOOKMARKS_RADIUS)),
+				((Integer) bMap.get(KEY_BOOKMARKS_REVERT_D)).equals(1),
+				new State((Integer) bMap.get(KEY_BOOKMARKS_WIFI_STATE),
+						((Integer) bMap.get(KEY_BOOKMARKS_WIFI_REVERT))
+								.equals(1)), new State(
+						(Integer) bMap.get(KEY_BOOKMARKS_MOBILE_NETWORK_STATE),
+						((Integer) bMap
+								.get(KEY_BOOKMARKS_MOBILE_NETWORK_REVERT))
+								.equals(1)), new State(
+						(Integer) bMap.get(KEY_BOOKMARKS_BLUETOOTH_STATE),
+						((Integer) bMap.get(KEY_BOOKMARKS_BLUETOOTH_REVERT))
+								.equals(1)), new State(
+						(Integer) bMap.get(KEY_BOOKMARKS_MUTE_STATE),
+						((Integer) bMap.get(KEY_BOOKMARKS_MUTE_REVERT))
+								.equals(1)), new State(
+						(Integer) bMap.get(KEY_BOOKMARKS_VIBRATOR_STATE),
+						((Integer) bMap.get(KEY_BOOKMARKS_VIBRATOR_REVERT))
+								.equals(1)), new State(
+						(Integer) bMap.get(KEY_BOOKMARKS_FLIGHTMODE_STATE),
+						((Integer) bMap.get(KEY_BOOKMARKS_FLIGHTMODE_REVERT))
+								.equals(1)));
+		return b;
+	}
+
+	/**
+	 * Get all contacts
+	 * 
+	 * @return a list of all contacts in the database
+	 */
+	public ArrayList<Bookmark> getBookmarks() {
+		ArrayList<Bookmark> bookmarks = new ArrayList<Bookmark>();
+
+		// Hent alle r�kker i TABLE_CONTACTS
+		List<Map<String, Object>> bookmarkRows = getAll(TABLE_BOOKMARKS);
+
+		if (bookmarkRows.size() == 0) {
+			// Der er ingen kontakter i databasen. Stop her!
+			return bookmarks; // Retuner en tom liste af kontakter
+		}
+
+		/*
+		 * L�b gennem listen af r�kker.
+		 */
+		for (Map<String, Object> row : bookmarkRows) {
+			// Hent data ned. Vi ved, at der ikke sker cast exceptions, fordi vi
+			// ved, hvad type felterne er.
+			int bId = (Integer) row.get(KEY_BOOKMARKS_ID);
+			String bName = (String) row.get(KEY_BOOKMARKS_NAME);
+			Coordinate bpostition = new Coordinate(
+					(Float) row.get(KEY_BOOKMARKS_LATITUDE),
+					(Float) row.get(KEY_BOOKMARKS_LONGITUDE));
+			int bRadius = (Integer) row.get(KEY_BOOKMARKS_RADIUS);
+			boolean bRevertToDefault = ((Integer) row
+					.get(KEY_BOOKMARKS_REVERT_D)).equals(1);
+			State bWifiState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_WIFI_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_WIFI_REVERT)).equals(1));
+			State bBluetoothState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_MOBILE_NETWORK_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_MOBILE_NETWORK_REVERT))
+							.equals(1));
+			State bMobileNetworkState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_BLUETOOTH_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_BLUETOOTH_REVERT))
+							.equals(1));
+			State bMuteState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_MUTE_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_MUTE_REVERT)).equals(1));
+			State bVibratorState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_VIBRATOR_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_VIBRATOR_REVERT))
+							.equals(1));
+			State bFlightmodeState = new State(
+					(Integer) row.get(KEY_BOOKMARKS_FLIGHTMODE_STATE),
+					((Integer) row.get(KEY_BOOKMARKS_FLIGHTMODE_REVERT))
+							.equals(1));
+			// Lav kontakten og put den i listen af kontakter.
+			Bookmark bookmark = new Bookmark(bId, bName, bpostition, bRadius,
+					bRevertToDefault, bWifiState, bMobileNetworkState,
+					bBluetoothState, bMuteState, bVibratorState,
+					bFlightmodeState);
+			bookmarks.add(bookmark);
+		}
+		// Aflever listen af kontakter.
+		return bookmarks;
+	}
+}
